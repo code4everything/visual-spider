@@ -27,18 +27,19 @@ public class Crawler extends WebCrawler {
 	// Pattern.compile(".*\\.(js|css)(\\?.*)?$", Pattern.CASE_INSENSITIVE);
 
 	public final Pattern IMAGES_PATTERN = Pattern.compile(
-			"(https?:)?//[^\\s&;\"':<>]*?\\.(bmp|gif|jpe?g|png|tiff?|pcx|tga|svg|pic)", Pattern.CASE_INSENSITIVE);
+			"(https?:)?//[^\\s&;\"':<>]*?\\.(bmp|gif|jpe?g|png|tiff?|pcx|tga|svg|pic)(\\?[^?\\s\"':<>]*)?",
+			Pattern.CASE_INSENSITIVE);
 
 	private final Pattern VIDEOS_PATTERN = Pattern.compile(
-			"(https?:)?//[^\\s&;\"':<>]*\\.(avi|mov|swf|asf|navi|wmv|3gp|mkv|flv|rm(vb)?|webm|mpg|mp4|qsv|mpe?g|mp3|aac|ogg|wav|flac|ape|wma|aif|au|ram|mmf|amr|flac)",
+			"(https?:)?//[^\\s&;\"':<>]*\\.(avi|mov|swf|asf|navi|wmv|3gp|mkv|flv|rm(vb)?|webm|mpg|mp4|qsv|mpe?g|mp3|aac|ogg|wav|flac|ape|wma|aif|au|ram|mmf|amr|flac)(\\?[^?\\s\"':<>]*)?",
 			Pattern.CASE_INSENSITIVE);
 
 	private final Pattern DOCS_PATTERN = Pattern.compile(
-			"(https?:)?//[^\\s&;\"':<>]*\\.(pdf|docx?|txt|log|conf|java|xml|json|css|js|html|hml|php|wps|rtf)",
+			"(https?:)?//[^\\s&;\"':<>]*\\.(pdf|docx?|txt|log|conf|java|xml|json|css|js|html|hml|php|wps|rtf)(\\?[^?\\s\"':<>]*)?",
 			Pattern.CASE_INSENSITIVE);
 
 	private final Pattern OTHERS_PATTERN = Pattern.compile(
-			"(https?:)?//[^\\s&;\"':<>]*\\.(zip|[0-9a-z]?z|exe|dmg|iso|jar|msi|rar|tmp|xlsx?|mdf|com|c|asm|for|lib|lst|msg|obj|pas|wki|bas|map|bak|dot|bat|sh|rpm)",
+			"(https?:)?//[^\\s&;\"':<>]*\\.(zip|[0-9a-z]?z|exe|dmg|iso|jar|msi|rar|tmp|xlsx?|mdf|com|c|asm|for|lib|lst|msg|obj|pas|wki|bas|map|bak|dot|bat|sh|rpm)(\\?[^?\\s\"':<>]*)?",
 			Pattern.CASE_INSENSITIVE);
 
 	@Override
@@ -88,13 +89,7 @@ public class Crawler extends WebCrawler {
 		}
 		if (Checker.isNotEmpty(url) && CrawlConfig.getCrawlLinks().get()) {
 			String path = App.DOWNLOAD_FOLDER + Values.SEPARATOR + "link";
-			Downloader.downloadFromNet(path, (url.startsWith("//") ? "http:" : "") + url, false);
-		}
-		if (App.controller.isFinished()) {
-			Platform.runLater(() -> {
-				App.mainController.stautsLabel.setText("finished");
-			});
-			App.mainController.toCrawl();
+			Downloader.download(path, (url.startsWith("//") ? "http:" : "") + url);
 		}
 	}
 
@@ -107,14 +102,15 @@ public class Crawler extends WebCrawler {
 	}
 
 	public void download(String path, String url) {
-		if (!App.downloadUrls.contains(url) && App.filterPatter.matcher(url).find()) {
-			App.downloadUrls.add(url);
+		String realUrl = url.split("\\?")[0];
+		if (!App.downloadUrls.contains(realUrl) && App.filterPatter.matcher(url).find()) {
+			App.downloadUrls.add(realUrl);
 			Platform.runLater(() -> App.mainController.logOut.appendText("downloading url: " + url + "\r\n"));
 			path += Values.SEPARATOR + url.substring(url.lastIndexOf(".") + 1);
 			if (path.contains(Values.QUESTION_MARK)) {
 				path = path.substring(0, path.indexOf(Values.QUESTION_MARK));
 			}
-			Downloader.downloadFromNet(path, (url.startsWith("//") ? "http:" : "") + url, true);
+			Downloader.download(path, (url.startsWith("//") ? "http:" : "") + url);
 			try {
 				Thread.sleep(App.crawlingDelay);
 			} catch (InterruptedException e) {

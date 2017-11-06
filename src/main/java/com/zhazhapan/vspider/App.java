@@ -43,7 +43,7 @@ public class App extends Application {
 	public static Pattern filterPatter = Pattern.compile(".*");
 
 	public static String DOWNLOAD_FOLDER = DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "files"
-			+ Values.SEPARATOR + Formatter.dateToString(new Date());
+			+ Values.SEPARATOR + Formatter.datetimeToCustomString(new Date(), "yyyyMMdd");
 
 	public static void main(String[] args) {
 		logger.info("start to run app");
@@ -71,7 +71,7 @@ public class App extends Application {
 		ThreadPool.setCorePoolSize(1);
 		ThreadPool.setMaximumPoolSize(3);
 		ThreadPool.setKeepAliveTime(1);
-		ThreadPool.setUnit(TimeUnit.SECONDS);
+		ThreadPool.setTimeUnit(TimeUnit.SECONDS);
 		ThreadPool.init();
 	}
 }

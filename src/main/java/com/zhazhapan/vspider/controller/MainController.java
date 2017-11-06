@@ -226,7 +226,13 @@ public class MainController {
 			int del = delNon < 1 ? DefaultConfigValues.POLITENESS_DELAY : delNon;
 			ThreadPool.executor.submit(() -> {
 				App.controller.startToCrawl(num, dep, pag, del, urls);
-				Platform.runLater(() -> stautsLabel.setText("init end"));
+				Platform.runLater(() -> {
+					if (App.controller.isFinished()) {
+						stautsLabel.setText("finished");
+						crawling = false;
+						toogleCrawling.setText(Values.CRAWLER_START);
+					}
+				});
 			});
 		}
 	}
