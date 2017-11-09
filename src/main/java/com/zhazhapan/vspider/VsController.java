@@ -27,25 +27,25 @@ public class VsController {
 
 	private int numberOfCrawlers = 1;
 
-	public void startToCrawl(String[] links) {
-		startToCrawl(DefaultConfigValues.NUMBER_OF_CRAWLERS, links);
+	public boolean isInited = false;
+
+	public void init(String[] links) {
+		init(DefaultConfigValues.NUMBER_OF_CRAWLERS, links);
 	}
 
-	public void startToCrawl(int numberOfCrawlers, String[] links) {
-		startToCrawl(numberOfCrawlers, DefaultConfigValues.POLITENESS_DELAY, links);
+	public void init(int numberOfCrawlers, String[] links) {
+		init(numberOfCrawlers, DefaultConfigValues.POLITENESS_DELAY, links);
 	}
 
-	public void startToCrawl(int numberOfCrawlers, int politenessDelay, String[] links) {
-		startToCrawl(numberOfCrawlers, DefaultConfigValues.MAX_DEPTH_OF_CRAWLING, Integer.MAX_VALUE, politenessDelay,
-				links);
+	public void init(int numberOfCrawlers, int politenessDelay, String[] links) {
+		init(numberOfCrawlers, DefaultConfigValues.MAX_DEPTH_OF_CRAWLING, Integer.MAX_VALUE, politenessDelay, links);
 	}
 
-	public void startToCrawl(int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay, String[] links) {
-		startToCrawl(DefaultConfigValues.NUMBER_OF_CRAWLERS, maxDepthOfCrawling, maxPagesToFetch, politenessDelay,
-				links);
+	public void init(int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay, String[] links) {
+		init(DefaultConfigValues.NUMBER_OF_CRAWLERS, maxDepthOfCrawling, maxPagesToFetch, politenessDelay, links);
 	}
 
-	public void startToCrawl(int numberOfCrawlers, int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay,
+	public void init(int numberOfCrawlers, int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay,
 			String[] links) {
 		this.numberOfCrawlers = numberOfCrawlers;
 		CrawlConfig config = new CrawlConfig();
@@ -77,18 +77,31 @@ public class VsController {
 					controller.addSeed(link);
 				}
 			}
-			start();
+			isInited = true;
 		} catch (Exception e) {
 			logger.error("start to crawl urls error: " + e.getMessage());
 		}
 	}
 
+	/**
+	 * 关闭爬虫，不可恢复
+	 */
 	public void shutdown() {
 		controller.shutdown();
 	}
 
-	public void start() {
-		controller.start(Crawler.class, numberOfCrawlers);
+	/**
+	 * 启动爬虫
+	 * 
+	 * @return 是否启动成功
+	 */
+	public boolean start() {
+		if (Checker.isNull(controller)) {
+			return false;
+		} else {
+			controller.start(Crawler.class, numberOfCrawlers);
+			return true;
+		}
 	}
 
 	public boolean isFinished() {

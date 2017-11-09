@@ -47,6 +47,7 @@ public class App extends Application {
 
 	public static void main(String[] args) {
 		logger.info("start to run app");
+		initThreadPool();
 		launch(args);
 	}
 
@@ -64,10 +65,9 @@ public class App extends Application {
 			stage.setIconified(true);
 			event.consume();
 		});
-		initThreadPool();
 	}
 
-	public void initThreadPool() {
+	public static void initThreadPool() {
 		ThreadPool.setCorePoolSize(1);
 		ThreadPool.setMaximumPoolSize(3);
 		ThreadPool.setKeepAliveTime(1);

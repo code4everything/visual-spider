@@ -187,11 +187,14 @@ public class MainController {
 	 */
 	public void toCrawl() {
 		if (crawling) {
+			// 暂停爬虫
 			crawling = false;
 			toogleCrawling.setText(Values.CRAWLER_START);
+			stautsLabel.setText("crawler suspend");
 			App.controller.shutdown();
 		} else {
-			if (Checker.isNullOrEmpty(crawlUrl.getText())) {
+			// 开始爬虫
+			if (!Checker.isHyperLink(crawlUrl.getText())) {
 				String html = htmlContent.getText();
 				if (Checker.isNotEmpty(html)) {
 					ThreadPool.executor.submit(() -> new Crawler().downloadURL("", html));
@@ -201,10 +204,8 @@ public class MainController {
 			crawling = true;
 			toogleCrawling.setText(Values.CRAWLER_STOP);
 			logger.info("start to crawl urls: " + crawlUrl.getText());
-			saveLog();
-			logOut.clear();
-			htmlContent.clear();
 			stautsLabel.setText("starting......");
+			// 读取爬虫配置
 			String[] urls = crawlUrl.getText().split(" ");
 			App.domains = new String[urls.length];
 			for (int i = 0; i < urls.length; i++) {
@@ -225,31 +226,40 @@ public class MainController {
 			int delNon = Formatter.stringToInt(CrawlConfig.getPolitenessDelay().get());
 			int del = delNon < 1 ? DefaultConfigValues.POLITENESS_DELAY : delNon;
 			ThreadPool.executor.submit(() -> {
-				App.controller.startToCrawl(num, dep, pag, del, urls);
-				Platform.runLater(() -> {
-					if (App.controller.isFinished()) {
-						stautsLabel.setText("finished");
-						crawling = false;
-						toogleCrawling.setText(Values.CRAWLER_START);
-					}
-				});
+				// 开启爬虫
+				App.controller.init(num, dep, pag, del, urls);
+				boolean res = App.controller.start();
+				finished(res);
 			});
 		}
+	}
+
+	public void finished(boolean start) {
+		Platform.runLater(() -> {
+			if (start) {
+				stautsLabel.setText("finished");
+			} else {
+				stautsLabel.setText("start error");
+			}
+			crawling = false;
+			toogleCrawling.setText(Values.CRAWLER_START);
+		});
 	}
 
 	/**
 	 * 重置爬虫
 	 */
 	public void reset() {
-		File file = new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "frontier");
-		if (file.exists()) {
-			deleteFile(file);
-		}
-		if (crawling) {
-			// 暂停爬虫
-			toCrawl();
-		}
+		deleteFile(new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "frontier"));
+		App.controller.shutdown();
+		ThreadPool.executor.shutdownNow();
+		saveLog();
+		htmlContent.clear();
+		logOut.clear();
 		crawlUrl.clear();
+		crawling = false;
+		toogleCrawling.setText(Values.CRAWLER_START);
+		App.initThreadPool();
 		App.controller = new VsController();
 	}
 
@@ -260,15 +270,19 @@ public class MainController {
 	 * @return
 	 */
 	public boolean deleteFile(File file) {
-		if (file.isDirectory()) {
-			String[] children = file.list();
-			if (Checker.isNotNull(children)) {
-				for (int i = 0; i < children.length; i++) {
-					deleteFile(new File(file, children[i]));
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				String[] children = file.list();
+				if (Checker.isNotNull(children)) {
+					for (int i = 0; i < children.length; i++) {
+						deleteFile(new File(file, children[i]));
+					}
 				}
 			}
+			return file.delete();
+		} else {
+			return false;
 		}
-		return file.delete();
 	}
 
 	/**
