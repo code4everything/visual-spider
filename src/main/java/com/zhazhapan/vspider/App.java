@@ -24,6 +24,7 @@ import javafx.stage.WindowEvent;
  * @author pantao
  *
  */
+@SuppressWarnings("restriction")
 public class App extends Application {
 
 	private static Logger logger = Logger.getLogger(App.class);
@@ -40,7 +41,9 @@ public class App extends Application {
 
 	public static int crawlingDelay = DefaultConfigValues.POLITENESS_DELAY;
 
-	public static Pattern filterPatter = Pattern.compile(".*");
+	public static Pattern downloadFilterPattern = Pattern.compile(".*");
+
+	public static Pattern crawlFilterPattern = Pattern.compile(".*");
 
 	public static String DOWNLOAD_FOLDER = DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "files"
 			+ Values.SEPARATOR + Formatter.datetimeToCustomString(new Date(), "yyyyMMdd");

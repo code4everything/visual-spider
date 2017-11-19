@@ -21,6 +21,7 @@ import javafx.application.Platform;
  * @author pantao
  *
  */
+@SuppressWarnings("restriction")
 public class Crawler extends WebCrawler {
 
 	// private final Pattern FILTER_PATTERN =
@@ -45,7 +46,7 @@ public class Crawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		String urlStr = url.getURL();
-		if (!App.visitUrls.contains(urlStr)) {
+		if (!App.visitUrls.contains(urlStr) && App.crawlFilterPattern.matcher(urlStr).find()) {
 			for (String domain : App.domains) {
 				if (urlStr.contains(domain)) {
 					App.visitUrls.add(urlStr);
@@ -103,7 +104,7 @@ public class Crawler extends WebCrawler {
 
 	public void download(String path, String url) {
 		String realUrl = url.split("\\?")[0];
-		if (!App.downloadUrls.contains(realUrl) && App.filterPatter.matcher(url).find()) {
+		if (!App.downloadUrls.contains(realUrl) && App.downloadFilterPattern.matcher(url).find()) {
 			App.downloadUrls.add(realUrl);
 			Platform.runLater(() -> App.mainController.logOut.appendText("downloading url: " + url + "\r\n"));
 			path += Values.SEPARATOR + url.substring(url.lastIndexOf(".") + 1);

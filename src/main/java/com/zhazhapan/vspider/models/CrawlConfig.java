@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
  * @author pantao
  *
  */
+@SuppressWarnings("restriction")
 public class CrawlConfig {
 
 	private static SimpleBooleanProperty crawlImages = new SimpleBooleanProperty(true);
@@ -44,8 +45,6 @@ public class CrawlConfig {
 	private static SimpleStringProperty proxyUser = new SimpleStringProperty();
 
 	private static SimpleStringProperty proxyPass = new SimpleStringProperty();
-
-	private static SimpleStringProperty filter = new SimpleStringProperty();
 
 	public static SimpleBooleanProperty getCrawlImages() {
 		return crawlImages;
@@ -157,13 +156,5 @@ public class CrawlConfig {
 
 	public static void setProxyPass(SimpleStringProperty proxyPass) {
 		CrawlConfig.proxyPass = proxyPass;
-	}
-
-	public static SimpleStringProperty getFilter() {
-		return filter;
-	}
-
-	public static void setFilter(SimpleStringProperty filter) {
-		CrawlConfig.filter = filter;
 	}
 }

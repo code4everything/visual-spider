@@ -38,6 +38,7 @@ import javafx.scene.input.KeyEvent;
  * @author pantao
  *
  */
+@SuppressWarnings("restriction")
 public class MainController {
 
 	private Logger logger = Logger.getLogger(MainController.class);
@@ -100,7 +101,13 @@ public class MainController {
 	private PasswordField proxyPassPF;
 
 	@FXML
-	private TextArea filterTA;
+	private TextField crawlFilterTF;
+
+	@FXML
+	private TextField downloadFilterTF;
+
+	@FXML
+	private CheckBox repeatCK;
 
 	private boolean crawling = false;
 
@@ -143,10 +150,17 @@ public class MainController {
 		proxyUserTF.textProperty().bindBidirectional(CrawlConfig.getProxyUser());
 		proxyPassPF.textProperty().bindBidirectional(CrawlConfig.getProxyPass());
 
-		filterTA.textProperty().bindBidirectional(CrawlConfig.getFilter());
-		filterTA.textProperty().addListener((ob, oldValue, newValue) -> {
+		downloadFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
 			try {
-				App.filterPatter = Pattern.compile(newValue);
+				App.downloadFilterPattern = Pattern.compile(newValue);
+			} catch (Exception e) {
+				// do nothing
+			}
+		});
+
+		crawlFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
+			try {
+				App.crawlFilterPattern = Pattern.compile(newValue);
 			} catch (Exception e) {
 				// do nothing
 			}
@@ -220,7 +234,8 @@ public class MainController {
 			int num = numNon < 1 ? DefaultConfigValues.NUMBER_OF_CRAWLERS : numNon;
 			int depNon = Formatter.stringToInt(CrawlConfig.getMaxDepthOfCrawling().get());
 			int dep = depNon < 1 || depNon > DefaultConfigValues.MAX_DEPTH_OF_CRAWLING
-					? DefaultConfigValues.MAX_DEPTH_OF_CRAWLING : depNon;
+					? DefaultConfigValues.MAX_DEPTH_OF_CRAWLING
+					: depNon;
 			int pagNon = Formatter.stringToInt(CrawlConfig.getMaxPagesToFetch().get());
 			int pag = pagNon < 1 ? Integer.MAX_VALUE : pagNon;
 			int delNon = Formatter.stringToInt(CrawlConfig.getPolitenessDelay().get());
@@ -243,6 +258,12 @@ public class MainController {
 			}
 			crawling = false;
 			toogleCrawling.setText(Values.CRAWLER_START);
+			if (repeatCK.isSelected()) {
+				App.visitUrls.clear();
+				App.downloadUrls.clear();
+				deleteFrontier();
+				toCrawl();
+			}
 		});
 	}
 
@@ -250,7 +271,7 @@ public class MainController {
 	 * 重置爬虫
 	 */
 	public void reset() {
-		deleteFile(new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "frontier"));
+		deleteFrontier();
 		App.controller.shutdown();
 		ThreadPool.executor.shutdownNow();
 		saveLog();
@@ -261,6 +282,10 @@ public class MainController {
 		toogleCrawling.setText(Values.CRAWLER_START);
 		App.initThreadPool();
 		App.controller = new VsController();
+	}
+
+	private void deleteFrontier() {
+		deleteFile(new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "frontier"));
 	}
 
 	/**

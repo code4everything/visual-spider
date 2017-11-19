@@ -99,7 +99,7 @@
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="274.0" VBox.vgrow="NEVER">
                                        <children>
                                           <Label text="线程数: " HBox.hgrow="NEVER" />
-                                          <TextField fx:id="numsTF" promptText="建议不超过10" HBox.hgrow="NEVER" />
+                                          <TextField fx:id="numsTF" prefHeight="27.0" prefWidth="197.0" promptText="建议不超过10" HBox.hgrow="NEVER" />
                                        </children>
                                        <opaqueInsets>
                                           <Insets />
@@ -111,7 +111,7 @@
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="274.0" VBox.vgrow="NEVER">
                                        <children>
                                           <Label text="爬取深度: " HBox.hgrow="NEVER" />
-                                          <TextField fx:id="depthTF" promptText="建议不超过32767" HBox.hgrow="NEVER" />
+                                          <TextField fx:id="depthTF" prefHeight="27.0" prefWidth="185.0" promptText="建议不超过32767" HBox.hgrow="NEVER" />
                                        </children>
                                        <VBox.margin>
                                           <Insets />
@@ -126,7 +126,7 @@
                                        </padding>
                                        <children>
                                           <Label text="爬取页数: " HBox.hgrow="NEVER" />
-                                          <TextField fx:id="pagesTF" promptText="建议不超过2147483647" HBox.hgrow="NEVER" />
+                                          <TextField fx:id="pagesTF" prefHeight="27.0" prefWidth="184.0" promptText="建议不超过2147483647" HBox.hgrow="NEVER" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="274.0" VBox.vgrow="NEVER">
@@ -135,19 +135,52 @@
                                        </padding>
                                        <children>
                                           <Label text="延迟(毫秒): " HBox.hgrow="NEVER" />
-                                          <TextField fx:id="delayTF" promptText="建议不低于100" HBox.hgrow="NEVER" />
+                                          <TextField fx:id="delayTF" prefHeight="27.0" prefWidth="175.0" promptText="建议不低于100" HBox.hgrow="NEVER" />
                                        </children>
+                                    </HBox>
+                                    <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
+                                    <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="274.0" VBox.vgrow="ALWAYS">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <children>
+                                          <Label text="链接过滤: " HBox.hgrow="NEVER" />
+                                          <TextField fx:id="crawlFilterTF" prefHeight="27.0" prefWidth="184.0" promptText="只爬取匹配的链接（正则）" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="20.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="274.0">
+                                       <children>
+                                          <Label text="下载过滤: " HBox.hgrow="NEVER" />
+                                          <TextField fx:id="downloadFilterTF" prefHeight="27.0" prefWidth="184.0" promptText="只下载匹配的链接（正则）" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="20.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets top="-10.0" />
+                                       </VBox.margin>
                                     </HBox>
                                     <Separator prefWidth="200.0" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Separator>
-                                    <CheckBox fx:id="proxyCK" mnemonicParsing="false" text="开启代理" VBox.vgrow="NEVER">
+                                    <HBox VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets left="10.0" />
                                        </VBox.margin>
-                                    </CheckBox>
+                                       <children>
+                                          <CheckBox fx:id="proxyCK" mnemonicParsing="false" text="开启代理" HBox.hgrow="NEVER" />
+                                          <CheckBox fx:id="repeatCK" mnemonicParsing="false" text="重复爬取">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="274.0">
                                        <padding>
                                           <Insets left="10.0" right="20.0" />
@@ -183,19 +216,6 @@
                                           <Label text="密码: " HBox.hgrow="NEVER" />
                                           <PasswordField fx:id="proxyPassPF" promptText="password" HBox.hgrow="ALWAYS" />
                                        </children>
-                                    </HBox>
-                                    <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
-                                    <HBox alignment="CENTER" prefHeight="51.0" prefWidth="274.0" VBox.vgrow="ALWAYS">
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                       <children>
-                                          <Label text="自定义过滤: " HBox.hgrow="NEVER" />
-                                          <TextArea fx:id="filterTA" prefHeight="42.0" prefWidth="154.0" promptText="仅支持正则表达式" HBox.hgrow="ALWAYS" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
-                                       </padding>
                                     </HBox>
                                  </children>
                               </VBox>
