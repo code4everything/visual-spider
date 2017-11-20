@@ -60,7 +60,7 @@ public class Crawler extends WebCrawler {
 	@Override
 	public void visit(Page page) {
 		String url = page.getWebURL().getURL();
-		if (page.getParseData() instanceof HtmlParseData) {
+		if (App.visitFilterPattern.matcher(url).find() && page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			Platform.runLater(() -> {
 				App.mainController.stautsLabel.setText("validating url: " + url);

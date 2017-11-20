@@ -25,6 +25,8 @@ public class CrawlConfig {
 
 	private static SimpleBooleanProperty crawlOthers = new SimpleBooleanProperty(false);
 
+	private static SimpleBooleanProperty repeatCrawl = new SimpleBooleanProperty(false);
+
 	private static SimpleStringProperty numberOfCrawlers = new SimpleStringProperty(
 			String.valueOf(DefaultConfigValues.NUMBER_OF_CRAWLERS));
 
@@ -45,6 +47,14 @@ public class CrawlConfig {
 	private static SimpleStringProperty proxyUser = new SimpleStringProperty();
 
 	private static SimpleStringProperty proxyPass = new SimpleStringProperty();
+
+	public static SimpleBooleanProperty getRepeatCrawl() {
+		return repeatCrawl;
+	}
+
+	public static void setRepeatCrawl(SimpleBooleanProperty repeatCrawl) {
+		CrawlConfig.repeatCrawl = repeatCrawl;
+	}
 
 	public static SimpleBooleanProperty getCrawlImages() {
 		return crawlImages;

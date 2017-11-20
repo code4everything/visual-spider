@@ -4,10 +4,12 @@
 package com.zhazhapan.vspider.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
 
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.FileExecutor;
@@ -109,6 +111,9 @@ public class MainController {
 	@FXML
 	private CheckBox repeatCK;
 
+	@FXML
+	private TextField visitFilterTF;
+
 	private boolean crawling = false;
 
 	private static MainController mainController = null;
@@ -150,6 +155,8 @@ public class MainController {
 		proxyUserTF.textProperty().bindBidirectional(CrawlConfig.getProxyUser());
 		proxyPassPF.textProperty().bindBidirectional(CrawlConfig.getProxyPass());
 
+		repeatCK.selectedProperty().bindBidirectional(CrawlConfig.getRepeatCrawl());
+
 		downloadFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
 			try {
 				App.downloadFilterPattern = Pattern.compile(newValue);
@@ -161,6 +168,14 @@ public class MainController {
 		crawlFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
 			try {
 				App.crawlFilterPattern = Pattern.compile(newValue);
+			} catch (Exception e) {
+				// do nothing
+			}
+		});
+
+		visitFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
+			try {
+				App.visitFilterPattern = Pattern.compile(newValue);
 			} catch (Exception e) {
 				// do nothing
 			}
@@ -249,7 +264,7 @@ public class MainController {
 		}
 	}
 
-	public void finished(boolean start) {
+	private void finished(boolean start) {
 		Platform.runLater(() -> {
 			if (start) {
 				stautsLabel.setText("finished");
@@ -258,13 +273,37 @@ public class MainController {
 			}
 			crawling = false;
 			toogleCrawling.setText(Values.CRAWLER_START);
-			if (repeatCK.isSelected()) {
-				App.visitUrls.clear();
-				App.downloadUrls.clear();
-				deleteFrontier();
-				toCrawl();
-			}
+			repeatCrawl();
 		});
+	}
+
+	private void repeatCrawl() {
+		int threads = Formatter.stringToInt(CrawlConfig.getNumberOfCrawlers().get());
+		if (threads > 5) {
+			threads = 5;
+		}
+		String[] urls = htmlContent.getText().replaceAll("crawling url: ", "").split("\n");
+		Crawler crawler = new Crawler();
+		for (int i = 0; i < threads; i++) {
+			ThreadPool.executor.submit(() -> {
+				while (CrawlConfig.getRepeatCrawl().get()) {
+					for (String url : urls) {
+						try {
+							crawler.downloadURL(url, Jsoup.connect(url).execute().body());
+							logger.info("repeat crawling url: " + url);
+							Platform.runLater(() -> stautsLabel.setText("validating url: " + url));
+						} catch (IOException e) {
+							logger.error("something wrong when repeat crawler, message: " + e.getMessage());
+						}
+					}
+					try {
+						Thread.sleep(Formatter.stringToLong(CrawlConfig.getPolitenessDelay().get()));
+					} catch (InterruptedException e) {
+						logger.error("sleep thread error: " + e.getMessage());
+					}
+				}
+			});
+		}
 	}
 
 	/**

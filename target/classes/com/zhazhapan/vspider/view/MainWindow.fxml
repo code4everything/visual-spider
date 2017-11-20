@@ -139,13 +139,22 @@
                                        </children>
                                     </HBox>
                                     <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
+                                    <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="274.0">
+                                       <children>
+                                          <Label text="前置过滤: " HBox.hgrow="NEVER" />
+                                          <TextField fx:id="crawlFilterTF" prefHeight="27.0" prefWidth="184.0" promptText="只爬取匹配的链接（正则）" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="20.0" />
+                                       </padding>
+                                    </HBox>
                                     <HBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="274.0" VBox.vgrow="ALWAYS">
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets top="-10.0" />
                                        </VBox.margin>
                                        <children>
                                           <Label text="链接过滤: " HBox.hgrow="NEVER" />
-                                          <TextField fx:id="crawlFilterTF" prefHeight="27.0" prefWidth="184.0" promptText="只爬取匹配的链接（正则）" />
+                                          <TextField fx:id="visitFilterTF" prefHeight="27.0" prefWidth="184.0" promptText="只访问匹配的链接（正则）" />
                                        </children>
                                        <padding>
                                           <Insets left="10.0" right="20.0" />
