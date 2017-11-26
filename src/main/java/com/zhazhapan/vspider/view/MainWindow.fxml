@@ -232,7 +232,7 @@
                         </ScrollPane>
                         <HBox>
                            <children>
-                              <TextArea fx:id="htmlContent" prefHeight="399.0" prefWidth="420.0" HBox.hgrow="ALWAYS">
+                              <TextArea fx:id="htmlContent" prefHeight="399.0" prefWidth="420.0" promptText="记录爬虫访问的链接" HBox.hgrow="ALWAYS">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -245,7 +245,7 @@
             </VBox>
             <VBox prefHeight="320.0" prefWidth="700.0">
                <children>
-                  <TextArea fx:id="logOut" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                  <TextArea fx:id="logOut" prefHeight="200.0" prefWidth="200.0" promptText="记录爬虫下载的链接" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
         </items>

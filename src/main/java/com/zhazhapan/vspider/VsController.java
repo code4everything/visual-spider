@@ -45,7 +45,6 @@ public class VsController {
 		init(DefaultConfigValues.NUMBER_OF_CRAWLERS, maxDepthOfCrawling, maxPagesToFetch, politenessDelay, links);
 	}
 
-	@SuppressWarnings("restriction")
 	public void init(int numberOfCrawlers, int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay,
 			String[] links) {
 		this.numberOfCrawlers = numberOfCrawlers;

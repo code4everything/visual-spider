@@ -21,7 +21,7 @@ public class Values {
 
 	public static final String QUESTION_MARK = "?";
 
-	public static final String CRAWLING_TIP = "crawling url:";
+	public static final String VISITING_TIP = "visiting url: ";
 
-	public static final String DOWNLOADING_TIP = "downloading url:";
+	public static final String DOWNLOADING_TIP = "downloading url: ";
 }

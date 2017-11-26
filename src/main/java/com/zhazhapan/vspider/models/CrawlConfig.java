@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleStringProperty;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class CrawlConfig {
 
 	private static SimpleBooleanProperty crawlImages = new SimpleBooleanProperty(true);

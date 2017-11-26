@@ -16,6 +16,7 @@ import com.zhazhapan.vspider.modules.constant.Values;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -24,7 +25,6 @@ import javafx.stage.WindowEvent;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class App extends Application {
 
 	private static Logger logger = Logger.getLogger(App.class);
@@ -65,6 +65,7 @@ public class App extends Application {
 			logger.error("load fxml error: " + e.getMessage());
 		}
 		stage.setTitle(Values.MAIN_TITLE);
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("view/spider.jpg")));
 		stage.show();
 		stage.setOnCloseRequest((WindowEvent event) -> {
 			stage.setIconified(true);

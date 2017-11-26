@@ -40,7 +40,6 @@ import javafx.scene.input.KeyEvent;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class MainController {
 
 	private Logger logger = Logger.getLogger(MainController.class);
@@ -201,9 +200,9 @@ public class MainController {
 	 */
 	public void saveLog() {
 		FileExecutor executor = new FileExecutor();
-		String crawingLog = htmlContent.getText();
-		if (Checker.isNotEmpty(crawingLog) && crawingLog.contains(Values.CRAWLING_TIP)) {
-			executor.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "crawling.log", crawingLog, true);
+		String visitingLog = htmlContent.getText();
+		if (Checker.isNotEmpty(visitingLog) && visitingLog.contains(Values.VISITING_TIP)) {
+			executor.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "visiting.log", visitingLog, true);
 		}
 		String downloadingLog = logOut.getText();
 		if (Checker.isNotEmpty(downloadingLog) && downloadingLog.contains(Values.DOWNLOADING_TIP)) {
@@ -282,7 +281,7 @@ public class MainController {
 		if (threads > 5) {
 			threads = 5;
 		}
-		String[] urls = htmlContent.getText().replaceAll("crawling url: ", "").split("\n");
+		String[] urls = htmlContent.getText().replaceAll(Values.VISITING_TIP, "").split("\n");
 		Crawler crawler = new Crawler();
 		for (int i = 0; i < threads; i++) {
 			ThreadPool.executor.submit(() -> {
@@ -290,7 +289,7 @@ public class MainController {
 					for (String url : urls) {
 						try {
 							crawler.downloadURL(url, Jsoup.connect(url).execute().body());
-							logger.info("repeat crawling url: " + url);
+							logger.info("repeat visiting url: " + url);
 							Platform.runLater(() -> stautsLabel.setText("validating url: " + url));
 						} catch (IOException e) {
 							logger.error("something wrong when repeat crawler, message: " + e.getMessage());

@@ -21,7 +21,6 @@ import javafx.application.Platform;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class Crawler extends WebCrawler {
 
 	// private final Pattern FILTER_PATTERN =
@@ -64,7 +63,7 @@ public class Crawler extends WebCrawler {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			Platform.runLater(() -> {
 				App.mainController.stautsLabel.setText("validating url: " + url);
-				App.mainController.htmlContent.appendText("crawling url: " + url + "\r\n");
+				App.mainController.htmlContent.appendText(Values.VISITING_TIP + url + "\r\n");
 			});
 			downloadURL(url, htmlParseData.getHtml());
 		}
@@ -106,7 +105,7 @@ public class Crawler extends WebCrawler {
 		String realUrl = url.split("\\?")[0];
 		if (!App.downloadUrls.contains(realUrl) && App.downloadFilterPattern.matcher(url).find()) {
 			App.downloadUrls.add(realUrl);
-			Platform.runLater(() -> App.mainController.logOut.appendText("downloading url: " + url + "\r\n"));
+			Platform.runLater(() -> App.mainController.logOut.appendText(Values.DOWNLOADING_TIP + url + "\r\n"));
 			path += Values.SEPARATOR + url.substring(url.lastIndexOf(".") + 1);
 			if (path.contains(Values.QUESTION_MARK)) {
 				path = path.substring(0, path.indexOf(Values.QUESTION_MARK));
