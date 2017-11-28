@@ -44,9 +44,15 @@ public class MainController {
 
 	private Logger logger = Logger.getLogger(MainController.class);
 
+	/**
+	 * 下载记录
+	 */
 	@FXML
 	public TextArea logOut;
 
+	/**
+	 * 链接检证状态标签
+	 */
 	@FXML
 	public Label stautsLabel;
 
@@ -68,6 +74,9 @@ public class MainController {
 	@FXML
 	private CheckBox othersCK;
 
+	/**
+	 * 访问记录
+	 */
 	@FXML
 	public TextArea htmlContent;
 
@@ -136,7 +145,7 @@ public class MainController {
 		mainController = this;
 		App.mainController = mainController;
 
-		// 邦定模型数据
+		// 绑定模型数据
 		pictureCK.selectedProperty().bindBidirectional(CrawlConfig.getCrawlImages());
 		videoCK.selectedProperty().bindBidirectional(CrawlConfig.getCrawlVideos());
 		linkCK.selectedProperty().bindBidirectional(CrawlConfig.getCrawlLinks());
@@ -156,9 +165,10 @@ public class MainController {
 
 		repeatCK.selectedProperty().bindBidirectional(CrawlConfig.getRepeatCrawl());
 
+		// 添加值改变事件
 		downloadFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
 			try {
-				App.downloadFilterPattern = Pattern.compile(newValue);
+				App.downloadFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
 			} catch (Exception e) {
 				// do nothing
 			}
@@ -166,7 +176,7 @@ public class MainController {
 
 		crawlFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
 			try {
-				App.crawlFilterPattern = Pattern.compile(newValue);
+				App.crawlFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
 			} catch (Exception e) {
 				// do nothing
 			}
@@ -174,7 +184,7 @@ public class MainController {
 
 		visitFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
 			try {
-				App.visitFilterPattern = Pattern.compile(newValue);
+				App.visitFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
 			} catch (Exception e) {
 				// do nothing
 			}
@@ -225,7 +235,9 @@ public class MainController {
 			if (!Checker.isHyperLink(crawlUrl.getText())) {
 				String html = htmlContent.getText();
 				if (Checker.isNotEmpty(html)) {
+					// 如果没有输入要爬取的链接，并且链接访问文本域的内容不为空，将直接把该内容作为源代码传送到下载模式
 					ThreadPool.executor.submit(() -> new Crawler().downloadURL("", html));
+					htmlContent.clear();
 				}
 				return;
 			}
@@ -244,6 +256,7 @@ public class MainController {
 					App.domains[i] = url;
 				}
 			}
+			// 爬虫参数转换为合法的数据
 			int numNon = Formatter.stringToInt(CrawlConfig.getNumberOfCrawlers().get());
 			int num = numNon < 1 ? DefaultConfigValues.NUMBER_OF_CRAWLERS : numNon;
 			int depNon = Formatter.stringToInt(CrawlConfig.getMaxDepthOfCrawling().get());
@@ -254,6 +267,7 @@ public class MainController {
 			int pag = pagNon < 1 ? Integer.MAX_VALUE : pagNon;
 			int delNon = Formatter.stringToInt(CrawlConfig.getPolitenessDelay().get());
 			int del = delNon < 1 ? DefaultConfigValues.POLITENESS_DELAY : delNon;
+			App.crawlingDelay = del;
 			ThreadPool.executor.submit(() -> {
 				// 开启爬虫
 				App.controller.init(num, dep, pag, del, urls);
@@ -263,6 +277,12 @@ public class MainController {
 		}
 	}
 
+	/**
+	 * 爬取完成时
+	 * 
+	 * @param start
+	 *            爬虫是否启动成功
+	 */
 	private void finished(boolean start) {
 		Platform.runLater(() -> {
 			if (start) {
@@ -272,10 +292,15 @@ public class MainController {
 			}
 			crawling = false;
 			toogleCrawling.setText(Values.CRAWLER_START);
-			repeatCrawl();
+			if (CrawlConfig.getRepeatCrawl().get()) {
+				repeatCrawl();
+			}
 		});
 	}
 
+	/**
+	 * 重复爬取，将不会启动crawler4j，而是直接从访问记录读取链接并重复访问
+	 */
 	private void repeatCrawl() {
 		int threads = Formatter.stringToInt(CrawlConfig.getNumberOfCrawlers().get());
 		if (threads > 5) {
@@ -296,7 +321,7 @@ public class MainController {
 						}
 					}
 					try {
-						Thread.sleep(Formatter.stringToLong(CrawlConfig.getPolitenessDelay().get()));
+						Thread.sleep(App.crawlingDelay);
 					} catch (InterruptedException e) {
 						logger.error("sleep thread error: " + e.getMessage());
 					}
@@ -306,7 +331,7 @@ public class MainController {
 	}
 
 	/**
-	 * 重置爬虫
+	 * 重置爬虫，将删除爬虫记录
 	 */
 	public void reset() {
 		deleteFrontier();
@@ -318,10 +343,15 @@ public class MainController {
 		crawlUrl.clear();
 		crawling = false;
 		toogleCrawling.setText(Values.CRAWLER_START);
+		App.visitUrls.clear();
+		App.downloadUrls.clear();
 		App.initThreadPool();
 		App.controller = new VsController();
 	}
 
+	/**
+	 * 删除crawler4j的配置文件
+	 */
 	private void deleteFrontier() {
 		deleteFile(new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "frontier"));
 	}
@@ -330,7 +360,8 @@ public class MainController {
 	 * 删除文件夹或文件
 	 * 
 	 * @param file
-	 * @return
+	 *            {@link File}
+	 * @return {@link Boolean}
 	 */
 	public boolean deleteFile(File file) {
 		if (file.exists()) {

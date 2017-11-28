@@ -29,30 +29,67 @@ public class App extends Application {
 
 	private static Logger logger = Logger.getLogger(App.class);
 
+	/**
+	 * 界面控制器
+	 */
 	public static MainController mainController = null;
 
+	/**
+	 * 爬虫控制器
+	 */
 	public static VsController controller = new VsController();
 
+	/**
+	 * 待爬取的URLs
+	 */
 	public static String[] domains;
 
+	/**
+	 * 记录访问过的URLs
+	 */
 	public static ArrayList<String> visitUrls = new ArrayList<String>();
 
+	/**
+	 * 记录下载过的URLs
+	 */
 	public static ArrayList<String> downloadUrls = new ArrayList<String>();
 
+	/**
+	 * 爬取延迟
+	 */
 	public static int crawlingDelay = DefaultConfigValues.POLITENESS_DELAY;
 
-	public static Pattern downloadFilterPattern = Pattern.compile(".*");
-
+	/**
+	 * 爬虫匹配（不匹配的链接将不会爬取，匹配的链接会进入访问状态）
+	 */
 	public static Pattern crawlFilterPattern = Pattern.compile(".*");
 
+	/**
+	 * 访问匹配（不匹配的链接将不会访问，匹配的链接会将服务器返回的源代码传送到下载模式）
+	 */
 	public static Pattern visitFilterPattern = Pattern.compile(".*");
 
+	/**
+	 * 下载匹配（从网页源代码获取可以下载的资源，资源链接不匹配的将不会下载）
+	 */
+	public static Pattern downloadFilterPattern = Pattern.compile(".*");
+
+	/**
+	 * 下载的存储目录
+	 */
 	public static String DOWNLOAD_FOLDER = DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "files"
 			+ Values.SEPARATOR + Formatter.datetimeToCustomString(new Date(), "yyyyMMdd");
 
+	/**
+	 * 主程序入口
+	 * 
+	 * @param args
+	 *            {@link String}
+	 */
 	public static void main(String[] args) {
 		logger.info("start to run app");
 		initThreadPool();
+		// 启动JavaFX，会调用start方法
 		launch(args);
 	}
 
@@ -73,6 +110,9 @@ public class App extends Application {
 		});
 	}
 
+	/**
+	 * 初始化线程池
+	 */
 	public static void initThreadPool() {
 		ThreadPool.setCorePoolSize(1);
 		ThreadPool.setMaximumPoolSize(5);

@@ -25,26 +25,78 @@ public class VsController {
 
 	private CrawlController controller = null;
 
-	private int numberOfCrawlers = 1;
+	private int numberOfCrawlers = DefaultConfigValues.NUMBER_OF_CRAWLERS;
 
+	/**
+	 * 是否已经初始化
+	 */
 	public boolean isInited = false;
 
+	/**
+	 * 初始化，其他参数使用默认数据
+	 * 
+	 * @param links
+	 */
 	public void init(String[] links) {
 		init(DefaultConfigValues.NUMBER_OF_CRAWLERS, links);
 	}
 
+	/**
+	 * 初始化，其他参数使用默认数据
+	 * 
+	 * @param numberOfCrawlers
+	 *            爬虫线程数
+	 * @param links
+	 *            待爬取链接
+	 */
 	public void init(int numberOfCrawlers, String[] links) {
 		init(numberOfCrawlers, DefaultConfigValues.POLITENESS_DELAY, links);
 	}
 
+	/**
+	 * 初始化，其他参数使用默认数据
+	 * 
+	 * @param numberOfCrawlers
+	 *            爬虫线程数
+	 * @param politenessDelay
+	 *            延迟
+	 * @param links
+	 *            待爬取链接
+	 */
 	public void init(int numberOfCrawlers, int politenessDelay, String[] links) {
 		init(numberOfCrawlers, DefaultConfigValues.MAX_DEPTH_OF_CRAWLING, Integer.MAX_VALUE, politenessDelay, links);
 	}
 
+	/**
+	 * 初始化，其他参数使用默认数据
+	 * 
+	 * @param maxDepthOfCrawling
+	 *            抓取深度
+	 * @param maxPagesToFetch
+	 *            最大抓取页数
+	 * @param politenessDelay
+	 *            延迟
+	 * @param links
+	 *            待爬取链接
+	 */
 	public void init(int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay, String[] links) {
 		init(DefaultConfigValues.NUMBER_OF_CRAWLERS, maxDepthOfCrawling, maxPagesToFetch, politenessDelay, links);
 	}
 
+	/**
+	 * 初始化
+	 * 
+	 * @param numberOfCrawlers
+	 *            爬虫线程数
+	 * @param maxDepthOfCrawling
+	 *            抓取深度
+	 * @param maxPagesToFetch
+	 *            最大抓取页数
+	 * @param politenessDelay
+	 *            延迟
+	 * @param links
+	 *            待爬取链接
+	 */
 	public void init(int numberOfCrawlers, int maxDepthOfCrawling, int maxPagesToFetch, int politenessDelay,
 			String[] links) {
 		this.numberOfCrawlers = numberOfCrawlers;
@@ -104,6 +156,11 @@ public class VsController {
 		}
 	}
 
+	/**
+	 * 是否已经完成
+	 * 
+	 * @return {@link Boolean}
+	 */
 	public boolean isFinished() {
 		return controller.isFinished();
 	}
