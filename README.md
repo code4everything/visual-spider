@@ -3,6 +3,8 @@
 
 **你可以随时暂停爬虫（也可能是意外退出），程序会保存进度，爬虫会从上次结束的位置继续爬取**
 
-[点我下载](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/VisualSpider.jar)
+QQ交流群（573484012）
 
 ![截图](http://oq3iwfipo.bkt.clouddn.com/tutorial/vspider/visualspider.png)
+
+[点我下载](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/VisualSpider.jar)
