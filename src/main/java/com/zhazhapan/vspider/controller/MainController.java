@@ -60,7 +60,7 @@ public class MainController {
     @FXML
     private CheckBox othersCK;
     @FXML
-    private Button toogleCrawling;
+    private Button toggleCrawling;
     @FXML
     private TextField numsTF;
     @FXML
@@ -189,7 +189,7 @@ public class MainController {
         if (crawling) {
             // 暂停爬虫
             crawling = false;
-            toogleCrawling.setText(Values.CRAWLER_START);
+            toggleCrawling.setText(Values.CRAWLER_START);
             statusLabel.setText("crawler suspend");
             App.controller.shutdown();
         } else {
@@ -204,7 +204,7 @@ public class MainController {
                 return;
             }
             crawling = true;
-            toogleCrawling.setText(Values.CRAWLER_STOP);
+            toggleCrawling.setText(Values.CRAWLER_STOP);
             logger.info("start to crawl urls: " + crawlUrl.getText());
             statusLabel.setText("starting......");
             // 读取爬虫配置
@@ -251,7 +251,7 @@ public class MainController {
                 statusLabel.setText("start error");
             }
             crawling = false;
-            toogleCrawling.setText(Values.CRAWLER_START);
+            toggleCrawling.setText(Values.CRAWLER_START);
             if (CrawlConfig.getRepeatCrawl().get()) {
                 repeatCrawl();
             }
@@ -302,7 +302,7 @@ public class MainController {
         logOut.clear();
         crawlUrl.clear();
         crawling = false;
-        toogleCrawling.setText(Values.CRAWLER_START);
+        toggleCrawling.setText(Values.CRAWLER_START);
         App.visitUrls.clear();
         App.downloadUrls.clear();
         App.initThreadPool();
