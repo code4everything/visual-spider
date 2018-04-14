@@ -34,7 +34,7 @@
    <bottom>
       <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="700.0" BorderPane.alignment="CENTER_RIGHT">
          <children>
-            <Label fx:id="stautsLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="630.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="statusLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="630.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

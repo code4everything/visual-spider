@@ -81,7 +81,7 @@ public class Crawler extends WebCrawler {
 		if (App.visitFilterPattern.matcher(url).find() && page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			Platform.runLater(() -> {
-				App.mainController.stautsLabel.setText("validating url: " + url);
+				App.mainController.statusLabel.setText("validating url: " + url);
 				App.mainController.htmlContent.appendText(Values.VISITING_TIP + url + "\r\n");
 			});
 			downloadURL(url, htmlParseData.getHtml());
