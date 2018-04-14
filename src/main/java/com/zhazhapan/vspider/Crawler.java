@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.zhazhapan.vspider;
 
 import java.net.URL;

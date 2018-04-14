@@ -1,12 +1,12 @@
-/**
- *
- */
 package com.zhazhapan.vspider.controller;
 
-import com.zhazhapan.util.*;
+import com.zhazhapan.util.Checker;
+import com.zhazhapan.util.Formatter;
+import com.zhazhapan.util.ThreadPool;
 import com.zhazhapan.util.dialog.Alerts;
 import com.zhazhapan.vspider.App;
 import com.zhazhapan.vspider.Crawler;
+import com.zhazhapan.vspider.SpiderUtils;
 import com.zhazhapan.vspider.VsController;
 import com.zhazhapan.vspider.models.CrawlConfig;
 import com.zhazhapan.vspider.modules.constant.DefaultConfigValues;
@@ -92,7 +92,7 @@ public class MainController {
     /**
      * 获取唯一实例
      *
-     * @return
+     * @return {@link MainController}
      */
     public static MainController getInstance() {
         return mainController;
@@ -172,14 +172,13 @@ public class MainController {
      * 保存爬取日志
      */
     public void saveLog() {
-        FileExecutor executor = new FileExecutor();
         String visitingLog = htmlContent.getText();
         if (Checker.isNotEmpty(visitingLog) && visitingLog.contains(Values.VISITING_TIP)) {
-            executor.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "visiting.log", visitingLog, true);
+            SpiderUtils.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "visiting.log", visitingLog, true);
         }
         String downloadingLog = logOut.getText();
         if (Checker.isNotEmpty(downloadingLog) && downloadingLog.contains(Values.DOWNLOADING_TIP)) {
-            executor.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "downloading.log", downloadingLog, true);
+            SpiderUtils.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "downloading.log", downloadingLog, true);
         }
     }
 
@@ -321,22 +320,18 @@ public class MainController {
      * 删除文件夹或文件
      *
      * @param file {@link File}
-     *
-     * @return {@link Boolean}
      */
-    public boolean deleteFile(File file) {
+    public void deleteFile(File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
                 String[] children = file.list();
                 if (Checker.isNotNull(children)) {
-                    for (int i = 0; i < children.length; i++) {
-                        deleteFile(new File(file, children[i]));
+                    for (String aChildren : children) {
+                        deleteFile(new File(file, aChildren));
                     }
                 }
             }
-            return file.delete();
-        } else {
-            return false;
+            file.delete();
         }
     }
 
@@ -344,13 +339,13 @@ public class MainController {
      * 打开存储目录
      */
     public void openStorageFolder() {
-        Utils.openFile(DefaultConfigValues.CRAWL_STORAGE_FOLDER);
+        SpiderUtils.openFile(DefaultConfigValues.CRAWL_STORAGE_FOLDER);
     }
 
     /**
      * 回车确认访问链接
      *
-     * @param event
+     * @param event {@link KeyEvent}
      */
     public void urlEnter(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
