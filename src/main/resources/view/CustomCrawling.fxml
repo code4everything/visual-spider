@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<DialogPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zhazhapan.vspider.controller.CustomCrawlingController">
+    <content>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="260.0" prefWidth="600.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <HBox VBox.vgrow="NEVER">
+                <CheckBox fx:id="enableCustomCrawling" mnemonicParsing="false" selected="true" text="自定义爬取" />
+                <CheckBox fx:id="enableSql" mnemonicParsing="false" selected="true" text="生成SQL" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </CheckBox>
+            </HBox>
+            <HBox VBox.vgrow="NEVER">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+                <TextField fx:id="dbHost" promptText="主机" text="127.0.0.1" HBox.hgrow="NEVER" />
+                <TextField fx:id="dbPort" prefHeight="27.0" prefWidth="101.0" promptText="端口" text="3306" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TextField>
+                <TextField fx:id="dbName" promptText="数据库" text="spider" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TextField>
+            </HBox>
+            <TextField fx:id="dbCondition" promptText="连接条件" text="useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=true" VBox.vgrow="NEVER">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+            </TextField>
+            <HBox VBox.vgrow="NEVER">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+                <TextField fx:id="dbUsername" promptText="用户名" text="root" HBox.hgrow="NEVER" />
+                <TextField fx:id="dbPassword" promptText="密码" text="password" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TextField>
+                <TextField fx:id="dbTable" promptText="指定表名" text="table" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TextField>
+            </HBox>
+            <Label text="XPath与字段名映射关系, 用英文逗号分隔多个映射（忽略多余的空格）" VBox.vgrow="NEVER">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+            </Label>
+            <TextArea fx:id="mappings" prefHeight="74.0" prefWidth="580.0" promptText="/node1 -&gt; field1, /node2 -&gt; field2" VBox.vgrow="ALWAYS">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+            </TextArea>
+        </VBox>
+    </content>
+</DialogPane>

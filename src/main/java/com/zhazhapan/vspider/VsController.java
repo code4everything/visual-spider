@@ -116,7 +116,9 @@ public class VsController {
      * 关闭爬虫，不可恢复
      */
     public void shutdown() {
-        controller.shutdown();
+        if (Checker.isNotNull(controller)) {
+            controller.shutdown();
+        }
     }
 
     /**

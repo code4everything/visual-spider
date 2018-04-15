@@ -4,13 +4,19 @@
 package com.zhazhapan.vspider.modules.constant;
 
 import com.zhazhapan.modules.constant.ValueConsts;
+import com.zhazhapan.util.RandomUtils;
+
+import java.io.File;
 
 /**
  * @author pantao
  */
 public class DefaultConfigValues {
 
-    public static final String CRAWL_STORAGE_FOLDER = ValueConsts.USER_HOME + Values.SEPARATOR + "vspider";
+    public static final String CRAWL_STORAGE_FOLDER = ValueConsts.USER_HOME + SpiderValueConsts.SEPARATOR + "vspider";
+
+    public static final String SQL_PATH = CRAWL_STORAGE_FOLDER + File.separator + RandomUtils
+            .getRandomStringOnlyLowerCase(8) + ".sql";
 
     public static final int NUMBER_OF_CRAWLERS = 3;
 

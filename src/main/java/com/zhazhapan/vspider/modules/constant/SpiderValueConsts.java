@@ -5,7 +5,7 @@ import com.zhazhapan.modules.constant.ValueConsts;
 /**
  * @author pantao
  */
-public class Values {
+public class SpiderValueConsts {
 
     public static final String MAIN_TITLE = "网络爬虫——JAVA版";
 

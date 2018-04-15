@@ -2,9 +2,10 @@ package com.zhazhapan.vspider;
 
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.ThreadPool;
+import com.zhazhapan.vspider.controller.CustomCrawlingController;
 import com.zhazhapan.vspider.controller.MainController;
 import com.zhazhapan.vspider.modules.constant.DefaultConfigValues;
-import com.zhazhapan.vspider.modules.constant.Values;
+import com.zhazhapan.vspider.modules.constant.SpiderValueConsts;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +15,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +25,13 @@ import java.util.regex.Pattern;
 /**
  * @author pantao
  */
-public class App extends Application {
+public class SpiderApplication extends Application {
+
+    public static Connection connection = null;
+
+    public static Statement statement = null;
+
+    public static CustomCrawlingController customCrawlingController = null;
 
     /**
      * 界面控制器
@@ -63,9 +72,9 @@ public class App extends Application {
     /**
      * 下载的存储目录
      */
-    public static String DOWNLOAD_FOLDER = DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "files" +
-            Values.SEPARATOR + Formatter.datetimeToCustomString(new Date(), "yyyyMMdd");
-    private static Logger logger = Logger.getLogger(App.class);
+    public static String DOWNLOAD_FOLDER = DefaultConfigValues.CRAWL_STORAGE_FOLDER + SpiderValueConsts.SEPARATOR +
+            "files" + SpiderValueConsts.SEPARATOR + Formatter.datetimeToCustomString(new Date(), "yyyyMMdd");
+    private static Logger logger = Logger.getLogger(SpiderApplication.class);
 
     /**
      * 主程序入口
@@ -98,7 +107,7 @@ public class App extends Application {
         } catch (Exception e) {
             logger.error("load fxml error: " + e.getMessage());
         }
-        stage.setTitle(Values.MAIN_TITLE);
+        stage.setTitle(SpiderValueConsts.MAIN_TITLE);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/image/spider.jpg")));
         stage.show();
         stage.setOnCloseRequest((WindowEvent event) -> {

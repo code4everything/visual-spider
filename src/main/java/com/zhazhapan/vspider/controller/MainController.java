@@ -1,26 +1,33 @@
 package com.zhazhapan.vspider.controller;
 
+import com.zhazhapan.modules.constant.ValueConsts;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.ThreadPool;
 import com.zhazhapan.util.dialog.Alerts;
-import com.zhazhapan.vspider.App;
 import com.zhazhapan.vspider.Crawler;
+import com.zhazhapan.vspider.SpiderApplication;
 import com.zhazhapan.vspider.SpiderUtils;
 import com.zhazhapan.vspider.VsController;
 import com.zhazhapan.vspider.models.CrawlConfig;
+import com.zhazhapan.vspider.models.MysqlConfig;
 import com.zhazhapan.vspider.modules.constant.DefaultConfigValues;
-import com.zhazhapan.vspider.modules.constant.Values;
+import com.zhazhapan.vspider.modules.constant.SpiderValueConsts;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
+import javafx.util.Pair;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -46,6 +53,8 @@ public class MainController {
      */
     @FXML
     public TextArea htmlContent;
+    @FXML
+    public CheckBox customCK;
     private Logger logger = Logger.getLogger(MainController.class);
     @FXML
     private TextField crawlUrl;
@@ -106,7 +115,7 @@ public class MainController {
         logger.info("init main window");
         // 创建唯一实例
         mainController = this;
-        App.mainController = mainController;
+        SpiderApplication.mainController = mainController;
 
         // 绑定模型数据
         pictureCK.selectedProperty().bindBidirectional(CrawlConfig.getCrawlImages());
@@ -131,7 +140,7 @@ public class MainController {
         // 添加值改变事件
         downloadFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
             try {
-                App.downloadFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
+                SpiderApplication.downloadFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
             } catch (Exception e) {
                 // do nothing
             }
@@ -139,7 +148,7 @@ public class MainController {
 
         crawlFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
             try {
-                App.crawlFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
+                SpiderApplication.crawlFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
             } catch (Exception e) {
                 // do nothing
             }
@@ -147,7 +156,7 @@ public class MainController {
 
         visitFilterTF.textProperty().addListener((ob, oldValue, newValue) -> {
             try {
-                App.visitFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
+                SpiderApplication.visitFilterPattern = Pattern.compile(newValue, Pattern.CASE_INSENSITIVE);
             } catch (Exception e) {
                 // do nothing
             }
@@ -159,12 +168,23 @@ public class MainController {
      */
     public void exit() {
         if (crawling) {
-            Optional<ButtonType> result = Alerts.showConfirmation(Values.MAIN_TITLE, Values.EXIT_CRAWLING);
+            Optional<ButtonType> result = Alerts.showConfirmation(SpiderValueConsts.MAIN_TITLE, SpiderValueConsts
+                    .EXIT_CRAWLING);
             if (result.get() != ButtonType.OK) {
                 return;
             }
         }
         saveLog();
+        try {
+            if (Checker.isNotNull(SpiderApplication.statement)) {
+                SpiderApplication.statement.close();
+            }
+            if (Checker.isNotNull(SpiderApplication.connection)) {
+                SpiderApplication.connection.close();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         System.exit(0);
     }
 
@@ -173,12 +193,14 @@ public class MainController {
      */
     public void saveLog() {
         String visitingLog = htmlContent.getText();
-        if (Checker.isNotEmpty(visitingLog) && visitingLog.contains(Values.VISITING_TIP)) {
-            SpiderUtils.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "visiting.log", visitingLog, true);
+        if (Checker.isNotEmpty(visitingLog) && visitingLog.contains(SpiderValueConsts.VISITING_TIP)) {
+            SpiderUtils.saveFile(SpiderApplication.DOWNLOAD_FOLDER + SpiderValueConsts.SEPARATOR + "visiting.log",
+                    visitingLog, true);
         }
         String downloadingLog = logOut.getText();
-        if (Checker.isNotEmpty(downloadingLog) && downloadingLog.contains(Values.DOWNLOADING_TIP)) {
-            SpiderUtils.saveFile(App.DOWNLOAD_FOLDER + Values.SEPARATOR + "downloading.log", downloadingLog, true);
+        if (Checker.isNotEmpty(downloadingLog) && downloadingLog.contains(SpiderValueConsts.DOWNLOADING_TIP)) {
+            SpiderUtils.saveFile(SpiderApplication.DOWNLOAD_FOLDER + SpiderValueConsts.SEPARATOR + "downloading.log",
+                    downloadingLog, true);
         }
     }
 
@@ -189,9 +211,9 @@ public class MainController {
         if (crawling) {
             // 暂停爬虫
             crawling = false;
-            toggleCrawling.setText(Values.CRAWLER_START);
+            toggleCrawling.setText(SpiderValueConsts.CRAWLER_START);
             statusLabel.setText("crawler suspend");
-            App.controller.shutdown();
+            SpiderApplication.controller.shutdown();
         } else {
             // 开始爬虫
             if (!Checker.isHyperLink(crawlUrl.getText())) {
@@ -204,18 +226,18 @@ public class MainController {
                 return;
             }
             crawling = true;
-            toggleCrawling.setText(Values.CRAWLER_STOP);
+            toggleCrawling.setText(SpiderValueConsts.CRAWLER_STOP);
             logger.info("start to crawl urls: " + crawlUrl.getText());
             statusLabel.setText("starting......");
             // 读取爬虫配置
             String[] urls = crawlUrl.getText().split(" ");
-            App.domains = new String[urls.length];
+            SpiderApplication.domains = new String[urls.length];
             for (int i = 0; i < urls.length; i++) {
                 String url = urls[i].replaceAll("https?://", "");
                 if (url.contains("/")) {
-                    App.domains[i] = url.substring(0, url.indexOf("/") + 1);
+                    SpiderApplication.domains[i] = url.substring(0, url.indexOf("/") + 1);
                 } else {
-                    App.domains[i] = url;
+                    SpiderApplication.domains[i] = url;
                 }
             }
             // 爬虫参数转换为合法的数据
@@ -228,11 +250,11 @@ public class MainController {
             int pag = pagNon < 1 ? Integer.MAX_VALUE : pagNon;
             int delNon = Formatter.stringToInt(CrawlConfig.getPolitenessDelay().get());
             int del = delNon < 1 ? DefaultConfigValues.POLITENESS_DELAY : delNon;
-            App.crawlingDelay = del;
+            SpiderApplication.crawlingDelay = del;
             ThreadPool.executor.submit(() -> {
                 // 开启爬虫
-                App.controller.init(num, dep, pag, del, urls);
-                boolean res = App.controller.start();
+                SpiderApplication.controller.init(num, dep, pag, del, urls);
+                boolean res = SpiderApplication.controller.start();
                 finished(res);
             });
         }
@@ -251,7 +273,7 @@ public class MainController {
                 statusLabel.setText("start error");
             }
             crawling = false;
-            toggleCrawling.setText(Values.CRAWLER_START);
+            toggleCrawling.setText(SpiderValueConsts.CRAWLER_START);
             if (CrawlConfig.getRepeatCrawl().get()) {
                 repeatCrawl();
             }
@@ -266,7 +288,7 @@ public class MainController {
         if (threads > 5) {
             threads = 5;
         }
-        String[] urls = htmlContent.getText().replaceAll(Values.VISITING_TIP, "").split("\n");
+        String[] urls = htmlContent.getText().replaceAll(SpiderValueConsts.VISITING_TIP, "").split("\n");
         Crawler crawler = new Crawler();
         for (int i = 0; i < threads; i++) {
             ThreadPool.executor.submit(() -> {
@@ -281,7 +303,7 @@ public class MainController {
                         }
                     }
                     try {
-                        Thread.sleep(App.crawlingDelay);
+                        Thread.sleep(SpiderApplication.crawlingDelay);
                     } catch (InterruptedException e) {
                         logger.error("sleep thread error: " + e.getMessage());
                     }
@@ -295,25 +317,25 @@ public class MainController {
      */
     public void reset() {
         deleteFrontier();
-        App.controller.shutdown();
+        SpiderApplication.controller.shutdown();
         ThreadPool.executor.shutdownNow();
         saveLog();
         htmlContent.clear();
         logOut.clear();
         crawlUrl.clear();
         crawling = false;
-        toggleCrawling.setText(Values.CRAWLER_START);
-        App.visitUrls.clear();
-        App.downloadUrls.clear();
-        App.initThreadPool();
-        App.controller = new VsController();
+        toggleCrawling.setText(SpiderValueConsts.CRAWLER_START);
+        SpiderApplication.visitUrls.clear();
+        SpiderApplication.downloadUrls.clear();
+        SpiderApplication.initThreadPool();
+        SpiderApplication.controller = new VsController();
     }
 
     /**
      * 删除crawler4j的配置文件
      */
     private void deleteFrontier() {
-        deleteFile(new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + Values.SEPARATOR + "frontier"));
+        deleteFile(new File(DefaultConfigValues.CRAWL_STORAGE_FOLDER + SpiderValueConsts.SEPARATOR + "frontier"));
     }
 
     /**
@@ -350,6 +372,75 @@ public class MainController {
     public void urlEnter(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             toCrawl();
+        }
+    }
+
+    /**
+     * 打开自定义爬取面板
+     */
+    public void customCrawling() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle(SpiderValueConsts.MAIN_TITLE);
+        dialog.setHeaderText(null);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        ButtonType ok = new ButtonType("确定", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("取消", ButtonBar.ButtonData.CANCEL_CLOSE);
+        try {
+            DialogPane dialogPane = FXMLLoader.load(getClass().getResource("/view/CustomCrawling.fxml"));
+            dialogPane.getButtonTypes().addAll(ok, cancel);
+            dialog.setDialogPane(dialogPane);
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (ok.equals(result.get())) {
+                //设置配置信息
+                CustomCrawlingController controller = SpiderApplication.customCrawlingController;
+                if (Checker.isNotNull(controller)) {
+                    String mappings = controller.mappings.getText();
+                    boolean enableCustom = controller.enableCustomCrawling.isSelected();
+                    if (enableCustom && Checker.isNotEmpty(mappings)) {
+                        MysqlConfig.setDbCondition(controller.dbCondition.getText());
+                        MysqlConfig.setDbHost(controller.dbHost.getText());
+                        MysqlConfig.setDbName(controller.dbName.getText());
+                        MysqlConfig.setDbPassword(controller.dbPassword.getText());
+                        MysqlConfig.setDbPort(controller.dbPort.getText());
+                        MysqlConfig.setDbUsername(controller.dbUsername.getText());
+                        MysqlConfig.setTableName(controller.dbTable.getText());
+                        MysqlConfig.setEnableCustom(true);
+                        MysqlConfig.setEnableSql(controller.enableSql.isSelected());
+                        String[] mapping = mappings.split(ValueConsts.COMMA_SIGN);
+                        for (String s : mapping) {
+                            String[] keyValue = s.split("->");
+                            Pair<String, String> map = new Pair<>(keyValue[0].trim(), keyValue[1].trim());
+                            MysqlConfig.getFields().add(map);
+                        }
+                        connectDatabase();
+                    } else {
+                        MysqlConfig.setEnableCustom(false);
+                        if (enableCustom) {
+                            Alerts.showWarning(SpiderValueConsts.MAIN_TITLE, "映射关系为空，无法开启自定义爬取");
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Alerts.showError(SpiderValueConsts.MAIN_TITLE, e.getMessage());
+        }
+        customCK.setSelected(MysqlConfig.isEnableCustom());
+    }
+
+    private void connectDatabase() {
+        try {
+            if (Checker.isNotNull(SpiderApplication.connection) && !SpiderApplication.connection.isClosed()) {
+                SpiderApplication.connection.close();
+            }
+            Class.forName("com.mysql.jdbc.Driver");
+            String url = "jdbc:mysql://" + MysqlConfig.getDbHost() + ":" + MysqlConfig.getDbPort() + "/" +
+                    MysqlConfig.getDbName() + "?" + MysqlConfig.getDbCondition();
+            SpiderApplication.connection = DriverManager.getConnection(url, MysqlConfig.getDbUsername(), MysqlConfig
+                    .getDbPassword());
+            SpiderApplication.statement = SpiderApplication.connection.createStatement();
+            logger.info("database connect success");
+        } catch (Exception e) {
+            Alerts.showError(SpiderValueConsts.MAIN_TITLE, e.getMessage());
         }
     }
 }

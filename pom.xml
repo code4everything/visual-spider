@@ -40,30 +40,17 @@
         <dependency>
             <groupId>edu.uci.ics</groupId>
             <artifactId>crawler4j</artifactId>
-            <version>4.3</version>
+            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.zhazhapan</groupId>
             <artifactId>util</artifactId>
-            <version>1.0.6</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-io</artifactId>
-                    <groupId>commons-io</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>cglib</artifactId>
-                    <groupId>cglib</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>docx4j-ImportXHTML</artifactId>
-                    <groupId>org.docx4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>poi</artifactId>
-                    <groupId>org.apache.poi</groupId>
-                </exclusion>
-            </exclusions>
+            <version>1.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.9-rc</version>
         </dependency>
     </dependencies>
 </project>
