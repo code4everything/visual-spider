@@ -21,6 +21,14 @@ QQ交流群（573484012）
 
 目前支持的文件格式有 zip，exe，dmg，iso，jar，msi，rar，tmp，xlsx，mdf，com，casm，for，lib，lst，msg，obj，pas，wki，bas，map，bak，dot，bat，sh，rpm
 
+#### 自定义爬取
+
+自定义XPath表达式，将匹配的网页内容存储至MySQL数据库
+
+![xpath](xpath.png)
+
+> [了解XPath语法](http://www.w3school.com.cn/xpath/xpath_syntax.asp)
+
 #### 爬虫工作流程
 
 ![工作流程](workflow.png)

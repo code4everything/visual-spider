@@ -122,13 +122,14 @@ public class Crawler extends WebCrawler {
             if (Checker.isNotEmpty(MysqlConfig.getFields())) {
                 for (Pair<String, String> pair : MysqlConfig.getFields()) {
                     preSlice.append(pair.getValue()).append(",");
-                    postSlice.append(SpiderUtils.evaluate(pair.getKey(), html)).append(",");
+                    postSlice.append("'").append(SpiderUtils.evaluate(pair.getKey(), html).replaceAll("'", "\\\\'"))
+                            .append("',");
                 }
                 String pre = preSlice.toString();
                 String post = postSlice.toString();
                 String sql = pre.substring(0, pre.length() - 1) + ")" + post.substring(0, post.length() - 1) + ")";
                 if (MysqlConfig.isEnableSql()) {
-                    SpiderUtils.saveFile(DefaultConfigValues.SQL_PATH, sql + "\r\n", true);
+                    SpiderUtils.saveFile(DefaultConfigValues.SQL_PATH, sql + ";\r\n", true);
                 }
                 try {
                     SpiderApplication.statement.executeUpdate(sql);

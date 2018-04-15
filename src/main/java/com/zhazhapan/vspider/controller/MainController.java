@@ -407,6 +407,7 @@ public class MainController {
                         MysqlConfig.setEnableCustom(true);
                         MysqlConfig.setEnableSql(controller.enableSql.isSelected());
                         String[] mapping = mappings.split(ValueConsts.COMMA_SIGN);
+                        MysqlConfig.getFields().clear();
                         for (String s : mapping) {
                             String[] keyValue = s.split("->");
                             Pair<String, String> map = new Pair<>(keyValue[0].trim(), keyValue[1].trim());

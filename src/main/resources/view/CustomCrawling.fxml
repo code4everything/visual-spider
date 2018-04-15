@@ -60,7 +60,7 @@
                     </HBox.margin>
                 </TextField>
             </HBox>
-            <Label text="XPath与字段名映射关系, 用英文逗号分隔多个映射（忽略多余的空格）" VBox.vgrow="NEVER">
+            <Label text="XPath与字段名映射关系, 用英文逗号分隔多个映射（忽略多余的空格）：xpath表达式 -> 字段名" VBox.vgrow="NEVER">
                 <VBox.margin>
                     <Insets top="10.0" />
                 </VBox.margin>
