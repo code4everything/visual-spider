@@ -17,12 +17,12 @@
     <bottom>
         <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="700.0" BorderPane.alignment="CENTER_RIGHT">
             <Label fx:id="statusLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                   prefHeight="20.0" prefWidth="630.0" HBox.hgrow="ALWAYS">
+                   prefHeight="20.0" prefWidth="680.0" HBox.hgrow="ALWAYS">
                 <HBox.margin>
                     <Insets left="10.0"/>
                 </HBox.margin>
             </Label>
-            <Label prefHeight="17.0" prefWidth="157.0" text="2017 (c) 潘滔 v1.1" HBox.hgrow="NEVER">
+            <Label prefHeight="17.0" prefWidth="150.0" text="2017 (c) 潘滔 v1.1" HBox.hgrow="NEVER">
                 <HBox.margin>
                     <Insets/>
                 </HBox.margin>

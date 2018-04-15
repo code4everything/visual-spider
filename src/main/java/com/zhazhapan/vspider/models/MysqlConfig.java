@@ -18,7 +18,7 @@ public class MysqlConfig {
 
     private static String dbPort = "3306";
 
-    private static String dbName = "test";
+    private static String dbName = "spider";
 
     private static String dbCondition = "useUnicode=true&characterEncoding=utf-8&useSSL=true";
 
