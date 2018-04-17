@@ -37,4 +37,4 @@ QQ交流群（573484012）
 
 ![截图](http://oq3iwfipo.bkt.clouddn.com/tutorial/vspider/visualspider.png)
 
-[点我下载](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/VisualSpider.jar)
+[点我下载](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/visual-spider-1.1.jar)
