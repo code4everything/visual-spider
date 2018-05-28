@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.zhazhapan.vspider.models;
 
 import com.zhazhapan.vspider.modules.constant.DefaultConfigValues;

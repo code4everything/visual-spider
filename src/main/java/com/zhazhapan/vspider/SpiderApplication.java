@@ -27,54 +27,73 @@ import java.util.regex.Pattern;
  */
 public class SpiderApplication extends Application {
 
+    private static final Logger LOGGER = Logger.getLogger(SpiderApplication.class);
+
+    /**
+     * MySQL 连接
+     */
     public static Connection connection = null;
 
+    /**
+     * MySQL 语句执行
+     */
     public static Statement statement = null;
 
+    /**
+     * 指定爬取的控制器
+     */
     public static CustomCrawlingController customCrawlingController = null;
 
     /**
      * 界面控制器
      */
     public static MainController mainController = null;
+
     /**
      * 爬虫控制器
      */
     public static VsController controller = new VsController();
+
     /**
      * 待爬取的URLs
      */
     public static String[] domains;
+
     /**
      * 记录访问过的URLs
      */
     public static ArrayList<String> visitUrls = new ArrayList<>();
+
     /**
      * 记录下载过的URLs
      */
     public static ArrayList<String> downloadUrls = new ArrayList<>();
+
     /**
      * 爬取延迟
      */
     public static int crawlingDelay = DefaultConfigValues.POLITENESS_DELAY;
+
     /**
      * 爬虫匹配（不匹配的链接将不会爬取，匹配的链接会进入访问状态）
      */
     public static Pattern crawlFilterPattern = Pattern.compile(".*");
+
     /**
      * 访问匹配（不匹配的链接将不会访问，匹配的链接会将服务器返回的源代码传送到下载模式）
      */
     public static Pattern visitFilterPattern = Pattern.compile(".*");
+
     /**
      * 下载匹配（从网页源代码获取可以下载的资源，资源链接不匹配的将不会下载）
      */
     public static Pattern downloadFilterPattern = Pattern.compile(".*");
+
     /**
      * 下载的存储目录
      */
     public static String DOWNLOAD_FOLDER = DefaultConfigValues.CRAWL_STORAGE_FOLDER + SpiderValueConsts.SEPARATOR +
             "files" + SpiderValueConsts.SEPARATOR + Formatter.datetimeToCustomString(new Date(), "yyyyMMdd");
-    private static Logger logger = Logger.getLogger(SpiderApplication.class);
 
     /**
      * 主程序入口
@@ -82,7 +101,7 @@ public class SpiderApplication extends Application {
      * @param args {@link String}
      */
     public static void main(String[] args) {
-        logger.info("start to run app");
+        LOGGER.info("start to run app");
         initThreadPool();
         // 启动JavaFX，会调用start方法
         launch(args);
@@ -101,11 +120,12 @@ public class SpiderApplication extends Application {
 
     @Override
     public void start(Stage stage) {
+        // 加载视图，由JavaFX调用
         try {
             BorderPane root = FXMLLoader.load(getClass().getResource("/view/MainWindow.fxml"));
             stage.setScene(new Scene(root));
         } catch (Exception e) {
-            logger.error("load fxml error: " + e.getMessage());
+            LOGGER.error("load fxml error: " + e.getMessage());
         }
         stage.setTitle(SpiderValueConsts.MAIN_TITLE);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/image/spider.jpg")));

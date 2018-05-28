@@ -23,9 +23,6 @@ import java.util.regex.Pattern;
  */
 public class Crawler extends WebCrawler {
 
-    // private final Pattern FILTER_PATTERN =
-    // Pattern.compile(".*\\.(js|css)(\\?.*)?$", Pattern.CASE_INSENSITIVE);
-
     /**
      * 匹配图片
      */
@@ -36,8 +33,9 @@ public class Crawler extends WebCrawler {
      * 匹配媒体文件
      */
     private final Pattern VIDEOS_PATTERN = Pattern.compile("(https?:)?//[^\\s&;\"':<>]*\\." + "" + "" + "" + "" + ""
-            + "(avi|mov|swf|asf|navi|wmv|3gp|mkv|flv|rm(vb)" +
-            "?|webm|mpg|mp4|qsv|mpe?g|mp3|aac|ogg|wav|flac|ape|wma|aif|au|ram|mmf|amr|flac)(\\?[^?\\s\"':<>]*)?",
+                    + "(avi|mov|swf|asf|navi|wmv|3gp|mkv|flv|rm(vb)" +
+                    "?|webm|mpg|mp4|qsv|mpe?g|mp3|aac|ogg|wav|flac|ape|wma|aif|au|ram|mmf|amr|flac)" +
+                    "(\\?[^?\\s\"':<>]*)?",
             Pattern.CASE_INSENSITIVE);
 
     /**
@@ -116,25 +114,36 @@ public class Crawler extends WebCrawler {
             String path = SpiderApplication.DOWNLOAD_FOLDER + SpiderValueConsts.SEPARATOR + "link";
             Downloader.download(path, (url.startsWith("//") ? "http:" : "") + url);
         }
-        if (MysqlConfig.isEnableCustom()) {
+        customCrawling(url, html);
+    }
+
+    /**
+     * 自定义爬取
+     *
+     * @param html 内容
+     */
+    public void customCrawling(String url, String html) {
+        boolean shouldCrawling = MysqlConfig.isEnableCustom() && SpiderApplication.downloadFilterPattern.matcher(url)
+                .find() && Checker.isNotEmpty(MysqlConfig.getFields());
+        if (shouldCrawling) {
             StringBuilder preSlice = new StringBuilder("insert into " + MysqlConfig.getTableName() + "(");
             StringBuilder postSlice = new StringBuilder(" values(");
-            if (Checker.isNotEmpty(MysqlConfig.getFields())) {
-                for (Pair<String, String> pair : MysqlConfig.getFields()) {
-                    preSlice.append(pair.getValue()).append(",");
-                    postSlice.append("'").append(SpiderUtils.evaluate(pair.getKey(), html).replaceAll("'", "\\\\'"))
-                            .append("',");
-                }
-                String pre = preSlice.toString();
-                String post = postSlice.toString();
-                String sql = pre.substring(0, pre.length() - 1) + ")" + post.substring(0, post.length() - 1) + ")";
-                if (MysqlConfig.isEnableSql()) {
-                    SpiderUtils.saveFile(DefaultConfigValues.SQL_PATH, sql + ";\r\n", true);
-                }
+            for (Pair<String, String> pair : MysqlConfig.getFields()) {
+                preSlice.append(pair.getValue()).append(",");
+                postSlice.append("'").append(SpiderUtils.evaluate(pair.getKey(), html).replaceAll("'", "\\\\'"))
+                        .append("',");
+            }
+            String pre = preSlice.toString();
+            String post = postSlice.toString();
+            String sql = pre.substring(0, pre.length() - 1) + ")" + post.substring(0, post.length() - 1) + ")";
+            if (MysqlConfig.isEnableSql()) {
+                SpiderUtils.saveFile(DefaultConfigValues.SQL_PATH, sql + ";\r\n", true);
+            }
+            if (MysqlConfig.isConnectionSuccessful()) {
                 try {
                     SpiderApplication.statement.executeUpdate(sql);
                 } catch (SQLException e) {
-                    System.out.println(e.getMessage());
+                    logger.error(e.getMessage());
                 }
             }
         }

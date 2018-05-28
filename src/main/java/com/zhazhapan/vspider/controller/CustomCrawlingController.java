@@ -47,6 +47,7 @@ public class CustomCrawlingController {
 
     @FXML
     private void initialize() {
+        // 初始化自定义爬取，并设置默认值
         SpiderApplication.customCrawlingController = this;
         mappings.setWrapText(true);
         dbHost.setText(MysqlConfig.getDbHost());

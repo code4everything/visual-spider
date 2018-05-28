@@ -20,7 +20,7 @@ public class MysqlConfig {
 
     private static String dbName = "spider";
 
-    private static String dbCondition = "useUnicode=true&characterEncoding=utf-8&useSSL=true";
+    private static String dbCondition = "useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC";
 
     private static String dbUsername = "root";
 
@@ -31,6 +31,16 @@ public class MysqlConfig {
     private static List<Pair<String, String>> fields = new ArrayList<>();
 
     private static boolean enableSql = false;
+
+    private static boolean connectionSuccessful = false;
+
+    public static boolean isConnectionSuccessful() {
+        return connectionSuccessful;
+    }
+
+    public static void setConnectionSuccessful(boolean connectionSuccessful) {
+        MysqlConfig.connectionSuccessful = connectionSuccessful;
+    }
 
     public static boolean isEnableSql() {
         return enableSql;

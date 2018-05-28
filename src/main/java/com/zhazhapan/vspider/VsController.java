@@ -19,8 +19,11 @@ public class VsController {
      * 是否已经初始化
      */
     public boolean isInited = false;
-    private Logger logger = Logger.getLogger(VsController.class);
+
+    private static final Logger LOGGER = Logger.getLogger(VsController.class);
+
     private CrawlController controller = null;
+
     private int numberOfCrawlers = DefaultConfigValues.NUMBER_OF_CRAWLERS;
 
     /**
@@ -88,7 +91,7 @@ public class VsController {
         config.setResumableCrawling(true);
 
         if (com.zhazhapan.vspider.models.CrawlConfig.getTurnOnProxy().get()) {
-            logger.info("open proxy");
+            LOGGER.info("open proxy");
             config.setProxyHost(com.zhazhapan.vspider.models.CrawlConfig.getProxyServer().get());
             config.setProxyPort(Formatter.stringToInt(com.zhazhapan.vspider.models.CrawlConfig.getProxyPort().get()));
             config.setProxyUsername(com.zhazhapan.vspider.models.CrawlConfig.getProxyUser().get());
@@ -108,7 +111,7 @@ public class VsController {
             }
             isInited = true;
         } catch (Exception e) {
-            logger.error("start to crawl urls error: " + e.getMessage());
+            LOGGER.error("start to crawl urls error: " + e.getMessage());
         }
     }
 
